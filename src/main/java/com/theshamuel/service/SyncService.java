@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 
 @Service
 public class SyncService {
@@ -78,7 +79,7 @@ public class SyncService {
                         if (offset == fileSize) {
                             last = true;
                         }
-                        String contentRange = String.valueOf(index).concat("-").concat(String.valueOf(offset));
+                        String contentRange = HttpRange.toString(Collections.singletonList(HttpRange.createByteRange(index, offset)));
                         if (last) {
                             byte[] k = Arrays.copyOf(buf.array(), x);
                             r = RequestEntity.
