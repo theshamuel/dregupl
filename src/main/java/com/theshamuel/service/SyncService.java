@@ -222,4 +222,7 @@ public class SyncService {
         return restTemplateRegFrom.exchange(r, ImageManifest.class).getBody();
     }
 
+    public void deleteImage(String image, String tag) {
+        //stub
+    }
 }
