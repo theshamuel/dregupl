@@ -1,2 +1,2 @@
 # dregupl
-Synchronizer of docker images for 2 docker registries (PoC)
+REST docker client and synchronizer of docker images for 2 docker registries (Source -> Destination)
