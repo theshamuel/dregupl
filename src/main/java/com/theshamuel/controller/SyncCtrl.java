@@ -38,21 +38,4 @@ public class SyncCtrl {
         return new ResponseEntity("pong", HttpStatus.OK);
     }
 
-    @GetMapping(value = "/pull/images")
-    public ResponseEntity pullImage() {
-        Instant start = Instant.now();
-        Instant finish = Instant.now();
-        syncService.pullImage();
-        logger.debug("Elapsed time getClientInfo: {}", Duration.between(start, finish).toMillis());
-        return new ResponseEntity(HttpStatus.OK);
-    }
-
-    @DeleteMapping(value = "/delete/image")
-    public ResponseEntity deleteImage(@RequestBody String image, @RequestBody String tag) {
-        Instant start = Instant.now();
-        Instant finish = Instant.now();
-        syncService.deleteImage(image, tag);
-        logger.debug("Elapsed time getClientInfo: {}", Duration.between(start, finish).toMillis());
-        return new ResponseEntity(HttpStatus.OK);
-    }
 }
