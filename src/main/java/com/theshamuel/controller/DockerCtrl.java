@@ -16,7 +16,7 @@ import java.time.Instant;
 public class DockerCtrl {
 
     private static Logger logger = LoggerFactory.getLogger(SyncCtrl.class);
-    
+
     public final DockerService dockerService;
 
     public DockerCtrl(DockerService dockerService) {

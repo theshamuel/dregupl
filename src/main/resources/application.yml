@@ -1,9 +1,10 @@
 server:
   port: 9000
 
-
 dregupl:
+  registry-source-url: ${REGISTRY_SOURCE_URL}
   registry-source-login: ${REGISTRY_SOURCE_LOGIN:admin}
   registry-source-password: ${REGISTRY_SOURCE_PASSWORD:admin}
+  registry-destination-url: ${REGISTRY_SOURCE_URL}
   registry-destination-login: ${REGISTRY_SOURCE_LOGIN:admin2}
   registry-destination-password: ${REGISTRY_SOURCE_PASSWORD:admin2}

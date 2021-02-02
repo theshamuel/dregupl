@@ -9,14 +9,20 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class DreguplProps {
 
+    private final String registrySourceURL;
     private final String registrySourceLogin;
     private final String registrySourcePassword;
+    private final String registryDestinationURL;
     private final String registryDestinationLogin;
     private final String registryDestinationPassword;
 
-    public DreguplProps(String registrySourceLogin, String registrySourcePassword, String registryDestinationLogin, String registryDestinationPassword) {
+    public DreguplProps(String registrySourceURL, String registrySourceLogin, String registrySourcePassword,
+                        String registryDestinationURL, String registryDestinationLogin,
+                        String registryDestinationPassword) {
+        this.registrySourceURL = registrySourceURL;
         this.registrySourceLogin = registrySourceLogin;
         this.registrySourcePassword = registrySourcePassword;
+        this.registryDestinationURL = registryDestinationURL;
         this.registryDestinationLogin = registryDestinationLogin;
         this.registryDestinationPassword = registryDestinationPassword;
     }
@@ -35,5 +41,13 @@ public class DreguplProps {
 
     public String getRegistryDestinationPassword() {
         return registryDestinationPassword;
+    }
+
+    public String getRegistrySourceURL() {
+        return registrySourceURL;
+    }
+
+    public String getRegistryDestinationURL() {
+        return registryDestinationURL;
     }
 }
