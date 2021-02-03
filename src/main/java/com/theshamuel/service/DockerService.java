@@ -2,6 +2,7 @@ package com.theshamuel.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.theshamuel.config.DreguplProps;
 import com.theshamuel.entity.ImageConfig;
 import com.theshamuel.entity.ImageManifest;
 import org.slf4j.Logger;
@@ -32,18 +33,19 @@ public class DockerService {
     private final RestTemplate restTemplateRegFrom;
     private final RestTemplate restTemplateRegTo;
     private final ObjectMapper mapper;
+    private final DreguplProps dreguplProps;
 
-    private final String REG_FROM_URL = "http://localhost:5000/v2";
-    private final String REG_TO_URL = "http://localhost:5002/v2";
     private final String MANIFEST_MEDIA_TYPE = "application/vnd.docker.distribution.manifest.v2+json";
 
     //TODO: refactor to param
     private final String TEST_IMAGE_NAME_TAG = "theshamuel/ed-toolbox:latest";
 
-    public DockerService(RestTemplate restTemplateRegFrom, RestTemplate restTemplateRegTo, ObjectMapper mapper) {
+    public DockerService(RestTemplate restTemplateRegFrom, RestTemplate restTemplateRegTo,
+                         ObjectMapper mapper, DreguplProps dreguplProps) {
         this.restTemplateRegFrom = restTemplateRegFrom;
         this.restTemplateRegTo = restTemplateRegTo;
         this.mapper = mapper;
+        this.dreguplProps = dreguplProps;
     }
 
     public void pushImage(String image, ImageManifest manifest, Path[] paths) {
@@ -110,7 +112,7 @@ public class DockerService {
         logger.info("PUSH_MANIFEST");
         try {
             RequestEntity r = RequestEntity.
-                    put(new URI(REG_TO_URL + "/" + image.split(":")[0] + "/manifests/" + image.split(":")[1]))
+                    put(new URI(dreguplProps.getRegistryDestinationURL() + "/v2/" + image.split(":")[0] + "/manifests/" + image.split(":")[1]))
                     .header(HttpHeaders.CONTENT_TYPE, manifest.getMediaType())
                     .body(mapper.writeValueAsString(manifest));
             restTemplateRegTo.exchange(r, Void.class);
@@ -124,7 +126,7 @@ public class DockerService {
     private URI pushInit(String image) {
         try {
             RequestEntity r = RequestEntity.
-                    post(new URI(REG_TO_URL + "/" + image.split(":")[0] + "/blobs/uploads/"))
+                    post(new URI(dreguplProps.getRegistryDestinationURL() + "/v2/" + image.split(":")[0] + "/blobs/uploads/"))
                     .header(HttpHeaders.CONTENT_LENGTH, "0")
                     .build();
             ResponseEntity responseEntity = restTemplateRegTo.exchange(r, Void.class);
@@ -161,7 +163,7 @@ public class DockerService {
         Path path = Paths.get("storage/" + manifest.getConfig().getDigest().replace("sha256:", ""));
         try (BufferedWriter writer = Files.newBufferedWriter(path, Charset.forName("UTF-8"))) {
             RequestEntity r = RequestEntity.
-                    get(new URI(REG_FROM_URL + "/" + image.split(":")[0] + "/blobs/" + manifest.getConfig().getDigest()))
+                    get(new URI(dreguplProps.getRegistrySourceURL() + "/v2/" + image.split(":")[0] + "/blobs/" + manifest.getConfig().getDigest()))
                     .header("Accept", MediaType.APPLICATION_JSON_VALUE)
                     .build();
 
@@ -185,7 +187,7 @@ public class DockerService {
             Path path = Paths.get("storage/" + ic.getDigest().replace("sha256:", ""));
             try {
                 RequestEntity r = RequestEntity.
-                        get(new URI(REG_FROM_URL + "/" + image.split(":")[0] + "/blobs/" + ic.getDigest()))
+                        get(new URI(dreguplProps.getRegistrySourceURL() + "/v2/" + image.split(":")[0] + "/blobs/" + ic.getDigest()))
                         .build();
                 Files.write(path, restTemplateRegFrom.exchange(r, byte[].class).getBody());
                 result[i] = path;
@@ -201,7 +203,7 @@ public class DockerService {
 
     public ImageManifest getManifest(String image) throws URISyntaxException {
         RequestEntity r = RequestEntity.
-                get(new URI(REG_FROM_URL + "/" + image.split(":")[0] + "/manifests/" + image.split(":")[1]))
+                get(new URI(dreguplProps.getRegistrySourceURL() + "/v2/" + image.split(":")[0] + "/manifests/" + image.split(":")[1]))
                 .header("Accept", MANIFEST_MEDIA_TYPE)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
