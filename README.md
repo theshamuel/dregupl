@@ -1,5 +1,5 @@
 # dregupl
-PoC on java for test for [DockRepSyncer](https://github.com/theshamuel/dockrepsyncer)
+PoC on java
 
-REST docker client and synchronizer of docker images for 2 docker registries (Source -> Destination)
+REST docker synchronizer of docker images for 2 docker registries (Source -> Destination)
 
